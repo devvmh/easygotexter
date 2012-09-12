@@ -33,7 +33,7 @@ public class DbAdapter {
     public static final String KEY_RECIP = "_recipient";
     public static final String KEY_ROWID = "_id";
     public static final String KEY_ORDER = "_order";
-    public static int highestOrderIndex = 1;
+    public static int highestOrderIndex = 0;
     
     /**
      * Note: _order could have any value - it's not an orderly list of indices.
@@ -170,9 +170,12 @@ public class DbAdapter {
         initialValues.put(KEY_NUMBER, number);
         initialValues.put(KEY_DESC, description);
         initialValues.put(KEY_RECIP, recipient);
+        
+        //should be incrementing before because this was set in the open() method
+        //so it's currently set to the curent highest "_order" value
         highestOrderIndex += 1;
         initialValues.put(KEY_ORDER, highestOrderIndex);
-        
+
         //only create if it's not blank
         if (description.equals ("")) {
         	return -1;
@@ -188,7 +191,6 @@ public class DbAdapter {
      * @return true if deleted, false otherwise
      */
     public boolean deleteNote(long rowId) {
-
         return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
     
@@ -219,6 +221,27 @@ public class DbAdapter {
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
                     KEY_NUMBER, KEY_DESC, KEY_RECIP, KEY_ORDER}, KEY_ROWID + "=" + rowId, null,
+                    null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+
+    }
+    
+    /**
+     * Return a Cursor positioned at the note that matches the given order
+     * 
+     * @param rowId id of note to retrieve
+     * @return Cursor positioned to matching note, if found
+     * @throws SQLException if note could not be found/retrieved
+     */
+    public Cursor fetchNoteFromOrder(long order) throws SQLException {
+
+        Cursor mCursor =
+
+            mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
+                    KEY_NUMBER, KEY_DESC, KEY_RECIP, KEY_ORDER}, KEY_ORDER + "=" + order, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();

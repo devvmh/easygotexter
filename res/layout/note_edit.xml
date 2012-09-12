@@ -1,50 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" 
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-		
-	<LinearLayout android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/recip"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:inputType="number" />
 
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:text="@string/title" />
-		<EditText android:id="@+id/title" 
-		  android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_weight="1"
-			android:inputType="number"/>
-	</LinearLayout>
-	
-	<LinearLayout android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/confirm"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/description_textview"
+        android:inputType="textCapWords" />
 
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:text="@string/recip" />
-		<EditText android:id="@+id/recip" 
-		  android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_weight="1" 
-			android:inputType="number"/>
-	</LinearLayout>
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/confirm" />
 
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:text="@string/body" />
-	<EditText android:id="@+id/body" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:scrollbars="vertical" 
-		android:inputType="textCapWords"/>
-	
-	<Button android:id="@+id/confirm" 
-	  android:text="@string/confirm"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/recip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/number"
+        android:layout_toRightOf="@+id/description_textview"
+        android:inputType="number" >
 
-</LinearLayout>
+        <requestFocus />
+    </EditText>
+    
+    <TextView
+        android:id="@+id/number_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/number"
+        android:layout_alignBottom="@+id/number"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dip"
+        android:text="@string/number" />
+
+    <TextView
+        android:id="@+id/recipient_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/recip"
+        android:layout_alignBottom="@+id/recip"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dip"
+        android:text="@string/recip" />
+
+    <TextView
+        android:id="@+id/description_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/recipient_textview"
+        android:layout_below="@+id/recip"
+        android:layout_marginTop="32dp"
+        android:text="@string/description" />
+
+</RelativeLayout>

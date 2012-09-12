@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.custom.CursorAdapter;
 
 
@@ -77,8 +76,6 @@ public class FormattableCursorAdapter extends CursorAdapter implements DropListe
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater)context.getSystemService
-			      (Context.LAYOUT_INFLATER_SERVICE);
 		View row =  inflater.inflate(layoutId, null);
 		return row;
 	}
@@ -99,8 +96,8 @@ public class FormattableCursorAdapter extends CursorAdapter implements DropListe
 		int toOrder = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_ORDER));
 		
 		//swap the two rowids
-		mDb.updateNote(toRowid, toNum, toDesc, toRecip, 0);
-		mDb.updateNote(fromRowid, fromNum, fromDesc, fromRecip, toOrder);
 		mDb.updateNote(toRowid, toNum, toDesc, toRecip, fromOrder);
+		mDb.updateNote(fromRowid, fromNum, fromDesc, fromRecip, toOrder);
+		//mDb.updateNote(toRowid, toNum, toDesc, toRecip, fromOrder);
 	}
 }

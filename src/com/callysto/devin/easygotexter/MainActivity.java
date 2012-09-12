@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -46,6 +47,7 @@ import com.ericharlow.DragNDrop.DragNDropListView;
 import com.ericharlow.DragNDrop.DropListener;
 
 public class MainActivity extends ListActivity {
+	public final static String TAG = "com.callysto.devin.easygotexter";
     private static final int ACTIVITY_CREATE = 0;
     private static final int ACTIVITY_EDIT = 1;
 
@@ -147,17 +149,6 @@ public class MainActivity extends ListActivity {
     			ImportExportActivity.class);
     	MenuItem importexport = menu.findItem(R.id.importexport_option_item);
     	importexport.setIntent(importExportIntent);
-    	
-    	//grtmobile intent
-    	//Intent grtMobileIntent = new Intent (this.getApplicationContext(),
-    	//		GRTMobileActivity.class);
-    	
-    	//BUGGED
-    	//MenuItem grtmobile = menu.findItem(R.id.grtmobile_option_item);
-    	//if (grtmobile != null) {
-    	//	grtmobile.setIntent(grtMobileIntent);
-    	//	alert ("Problem,", "officer?");
-    	//}//if
     		
     	return true;
     }
@@ -189,22 +180,22 @@ public class MainActivity extends ListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-    	AdapterContextMenuInfo info;
+    	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    	Cursor c = mDbHelper.fetchNoteFromOrder(info.id);
+    	long rowid = c.getLong(c.getColumnIndexOrThrow(DbAdapter.KEY_ROWID));
         switch(item.getItemId()) {
             case DELETE_ID:
                 info = (AdapterContextMenuInfo) item.getMenuInfo();
-                mDbHelper.deleteNote(info.id);
+                mDbHelper.deleteNote(rowid);
                 fillData();
                 return true;
             case EDIT_ID:
                 Intent i = new Intent(this, EditorActivity.class);
-                info = (AdapterContextMenuInfo) item.getMenuInfo();
-                i.putExtra(DbAdapter.KEY_ROWID, info.id);
+                i.putExtra(DbAdapter.KEY_ROWID, rowid);
                 startActivityForResult(i, ACTIVITY_EDIT);
                 return true;
             case TEXT_ID:
-            	info = (AdapterContextMenuInfo) item.getMenuInfo();
-                Cursor c = mDbHelper.fetchNote (info.id);
+            	//c declared above
                 String number = c.getString(c.getColumnIndexOrThrow(
                 		DbAdapter.KEY_NUMBER));
                 String recipient = c.getString(c.getColumnIndexOrThrow(
@@ -217,11 +208,14 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v , position, id);
+
+        //its actually the order...
+        Cursor c = mDbHelper.fetchNoteFromOrder (id);
         
-        //send a text to EasyGo
-        Cursor c = mDbHelper.fetchNote (id);
         String number = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_NUMBER));
         String recipient = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_RECIP));
+        
+        //send a text to EasyGo
         sendText (number, recipient);
     }//onListitemClick
     
@@ -264,7 +258,7 @@ public class MainActivity extends ListActivity {
     	        	ListAdapter adapter = getListAdapter();
     	        	if (adapter instanceof DropListener) {
     	        		((DropListener)adapter).onDrop(dragged, replaced);
-    	        		System.out.println ("Invalidating: " + getListView().getClass().getName());
+    	        		Log.v(TAG, "Invalidating: " + getListView().getClass().getName());
     	        		fillData();
     	        	}
     	        }

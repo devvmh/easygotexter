@@ -1,21 +1,24 @@
 package com.callysto.devin.easygotexter;
 
-import com.callysto.devin.easygotexter.util.DbAdapter;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.callysto.devin.easygotexter.util.DbAdapter;
 
 public class EditorActivity extends Activity {
 
     private EditText mNumberText;
     private EditText mDescText;
     private EditText mRecipText;
+    private Button confirmButton;
     private Long mRowId;
     private DbAdapter mDbHelper;
 
@@ -28,11 +31,11 @@ public class EditorActivity extends Activity {
         setContentView(R.layout.note_edit);
         setTitle(R.string.edit_note);
 
-        mNumberText = (EditText) findViewById (R.id.title);
-        mDescText = (EditText) findViewById (R.id.body);
+        mNumberText = (EditText) findViewById (R.id.number);
+        mDescText = (EditText) findViewById (R.id.description);
         mRecipText = (EditText) findViewById (R.id.recip);
 
-        Button confirmButton = (Button) findViewById(R.id.confirm);
+        confirmButton = (Button) findViewById(R.id.confirm);
 
         mRowId = (savedInstanceState == null) ? null :
             (Long) savedInstanceState.getSerializable(DbAdapter.KEY_ROWID);
@@ -63,6 +66,18 @@ public class EditorActivity extends Activity {
                 finish();
             }
         });
+        
+        mDescText.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				if (s.toString().trim().length() < 1) {
+					confirmButton.setText("Cancel");
+				} else {
+					confirmButton.setText("Confirm");
+				}
+			}
+			public void beforeTextChanged(CharSequence a0, int a1, int a2, int a3) {}
+			public void onTextChanged(CharSequence a0, int a1, int a2, int arg3) {}
+        });
     }
 
     private void populateFields() {
@@ -92,11 +107,13 @@ public class EditorActivity extends Activity {
     protected void onPause() {
         super.onPause();
         saveState();
+        mDbHelper.close();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mDbHelper.open();
         populateFields();
     }
 
@@ -113,6 +130,7 @@ public class EditorActivity extends Activity {
         } else {
             mDbHelper.updateNote(mRowId, number, description, recipient);
         }
+        mDbHelper.close();
     }//saveState
 
 }//Editor class
