@@ -1,24 +1,10 @@
-/*
- * Copyright (C) 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.callysto.devin.easygotexter;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +13,7 @@ public class Editor extends Activity {
 
     private EditText mNumberText;
     private EditText mDescText;
+    private EditText mRecipText;
     private Long mRowId;
     private DbAdapter mDbHelper;
 
@@ -39,8 +26,9 @@ public class Editor extends Activity {
         setContentView(R.layout.note_edit);
         setTitle(R.string.edit_note);
 
-        mNumberText = (EditText) findViewById(R.id.title);
-        mDescText = (EditText) findViewById(R.id.body);
+        mNumberText = (EditText) findViewById (R.id.title);
+        mDescText = (EditText) findViewById (R.id.body);
+        mRecipText = (EditText) findViewById (R.id.recip);
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
 
@@ -48,8 +36,25 @@ public class Editor extends Activity {
             (Long) savedInstanceState.getSerializable(DbAdapter.KEY_ROWID);
 		if (mRowId == null) {
 			Bundle extras = getIntent().getExtras();
-			mRowId = extras != null ? extras.getLong(DbAdapter.KEY_ROWID)
-									: null;
+
+			//quicktext function will send the number as an extra
+			String number = extras.getString(DbAdapter.KEY_NUMBER);
+			if (number != null) {
+				mNumberText.setText(number);
+			}//if
+
+			//we want it to be null if we're creating a new note. convolution time!
+			if (extras == null) {
+				mRowId = null;
+			} else {
+				mRowId = extras.getLong(DbAdapter.KEY_ROWID);
+				if (mRowId == 0) {
+					mRowId = null;
+				}//if
+			}//if
+	    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+	    			getBaseContext());
+			mRecipText.setText(prefs.getString("default_recip_pref", "57555"));
 		}
 
 		populateFields();
@@ -74,6 +79,8 @@ public class Editor extends Activity {
                     note.getColumnIndexOrThrow(DbAdapter.KEY_NUMBER)));
             mDescText.setText(note.getString(
                     note.getColumnIndexOrThrow(DbAdapter.KEY_DESC)));
+            mRecipText.setText(note.getString(
+            		note.getColumnIndexOrThrow(DbAdapter.KEY_RECIP)));
         }
     }
 
@@ -99,15 +106,16 @@ public class Editor extends Activity {
     private void saveState() {
         String number = mNumberText.getText().toString();
         String description = mDescText.getText().toString();
+        String recipient = mRecipText.getText().toString();
 
         if (mRowId == null) {
-            long id = mDbHelper.createNote(number, description);
+            long id = mDbHelper.createNote(number, description, recipient);
             if (id > 0) {
                 mRowId = id;
             }
         } else {
-            mDbHelper.updateNote(mRowId, number, description);
+            mDbHelper.updateNote(mRowId, number, description, recipient);
         }
-    }
+    }//saveState
 
-}
+}//Editor class

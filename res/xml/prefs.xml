@@ -3,8 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:title="Settings">
     <EditTextPreference 
     	android:summary="Click to edit"
-    	android:defaultValue="@string/easygo_num" 
-    	android:title="EasyGo's Number"
-        android:dialogTitle="EasyGo's Number"
-        android:key="text_to_pref"></EditTextPreference>
+    	android:defaultValue="@string/default_recipient" 
+    	android:title="Default Recipient"
+        android:dialogTitle="Default Recipient"
+        android:key="default_recip_pref" />
+    <CheckBoxPreference
+    	android:key="show_num_in_desc"
+ 		android:title="Show EasyGo Number"
+	 	android:summary="e.g. Visible Description - 1234" />
 </PreferenceScreen>

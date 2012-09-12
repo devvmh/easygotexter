@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -38,21 +39,14 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class EasyGoTexter extends ListActivity {
     private static final int ACTIVITY_CREATE = 0;
     private static final int ACTIVITY_EDIT = 1;
-    //private static final int ACTIVITY_SETTINGS = 2;
 
     private static final int DELETE_ID = Menu.FIRST;
     private static final int EDIT_ID = Menu.FIRST + 1;
     private static final int TEXT_ID = Menu.FIRST + 2;
-
-    private DbAdapter mDbHelper;
     
-    //Preferences - fields and updater function
-    String text_to;
-    private void getPrefs () {
-    	SharedPreferences prefs = PreferenceManager
-        	.getDefaultSharedPreferences(getBaseContext());
-    	text_to = prefs.getString("text_to_pref", "57555");
-    }
+    private EditText quickTextBox;
+    private AlertDialog alert;
+    private DbAdapter mDbHelper;
 
     /** Called when the activity is first created. */
     @Override
@@ -64,13 +58,34 @@ public class EasyGoTexter extends ListActivity {
         fillData();
         registerForContextMenu(getListView());
         
+        quickTextBox = (EditText) findViewById (R.id.quicktextbox);
+        
+    	//sets up alerts
+    	alert = new AlertDialog.Builder(this).create();
+        
         //update preferences
         getPrefs();
     }
+    
+    public void onResume () {
+    	super.onResume();
+    	//so preferences will update
+    	getPrefs();
+    	fillData();
+    }//onResume
+    
+    //Preferences - fields and updater function
+    String default_recipient;
+    boolean showNumberToo;
+    private void getPrefs () {
+    	SharedPreferences prefs = PreferenceManager
+        	.getDefaultSharedPreferences(getBaseContext());
+    	default_recipient = prefs.getString("default_recip_pref", "57555");
+    	showNumberToo = prefs.getBoolean("show_num_in_desc", true);	
+    }
 
-    private void sendText (String message) {
+    private void sendText (String message, String recipient) {
     	getPrefs ();
-    	String recipient = text_to;
     	
         if (message.length() < 4 || message.length() > 160) {
             return;
@@ -78,30 +93,32 @@ public class EasyGoTexter extends ListActivity {
         SmsManager sm = SmsManager.getDefault();
         sm.sendTextMessage(recipient, null, message, null, null);
         
-        AlertDialog alert = new AlertDialog.Builder(this).create();
-        alert.setTitle ("Text sent!");
-        alert.setMessage ("Recipient: " + recipient + "\nMessage: " + message);
-        alert.setButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				return;
-			}
-		});
-        alert.show ();
+        alert ("Text sent!", "Recipient:" + recipient + "\nMessage: " + message);
     }
 
     private void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllNotes();
         startManagingCursor(notesCursor);
+        SimpleCursorAdapter notes;
 
-        // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[]{DbAdapter.KEY_DESC};
+        //showing just visible description, or number too?
+        if (showNumberToo) {
+        	// Create an array to specify the fields we want to display in the list
+        	String[] from = new String[]{DbAdapter.KEY_DESC, DbAdapter.KEY_NUMBER};
 
-        // and an array of the fields we want to bind those fields to (in this case just text1)
-        int[] to = new int[]{R.id.text1};
+        	// and an array of the fields we want to bind those fields to (in this case just text1)
+        	int[] to = new int[]{R.id.text1, R.id.text2};
 
-        // Now create a simple cursor adapter and set it to display
-        SimpleCursorAdapter notes = 
-            new SimpleCursorAdapter(this, R.layout.notes_row, notesCursor, from, to);
+        	// Now create a simple cursor adapter and set it to display
+        	notes = new SimpleCursorAdapter(this, R.layout.notes_row2, 
+        			notesCursor, from, to);
+        } else {
+        	//analagous to the above, but only showing the visible description
+        	String [] from = new String [] {DbAdapter.KEY_DESC};
+        	int [] to = new int[]{R.id.text1};
+        	notes = new SimpleCursorAdapter (this, R.layout.notes_row,
+        			notesCursor, from, to);
+    	}//if
         setListAdapter(notes);
     }
 
@@ -122,12 +139,12 @@ public class EasyGoTexter extends ListActivity {
     public boolean onOptionsItemSelected (MenuItem item) {
     	switch (item.getItemId()) {
     		case R.id.add_note:
-    	        Intent addIntent = new Intent(this, Editor.class);
-    	        startActivityForResult(addIntent, ACTIVITY_CREATE);
+    	        Intent i = new Intent(this, Editor.class);
+    		    i.putExtra (DbAdapter.KEY_NUMBER, "");
+    	        startActivityForResult(i, ACTIVITY_CREATE);
     			return true;
     		case R.id.settings_option_item:
-    			//Intent prefsIntent = new Intent (this, PrefsActivity.class);
-    			//startActivityForResult (prefsIntent, ACTIVITY_SETTINGS);
+    			//doing it for result means it'll fill data when it returns
     			this.startActivity(item.getIntent());
     			return true;
     	}//switch
@@ -161,20 +178,24 @@ public class EasyGoTexter extends ListActivity {
             case TEXT_ID:
             	info = (AdapterContextMenuInfo) item.getMenuInfo();
                 Cursor c = mDbHelper.fetchNote (info.id);
-                String number = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_NUMBER));
-                sendText (number);
-        }
+                String number = c.getString(c.getColumnIndexOrThrow(
+                		DbAdapter.KEY_NUMBER));
+                String recipient = c.getString(c.getColumnIndexOrThrow(
+                		DbAdapter.KEY_RECIP));
+                sendText (number, recipient);
+        }//switch
         return super.onContextItemSelected(item);
-    }
+    }//onContextItemSelected
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
+        super.onListItemClick(l, v , position, id);
         
         //send a text to EasyGo
         Cursor c = mDbHelper.fetchNote (id);
         String number = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_NUMBER));
-        sendText (number);
+        String recipient = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_RECIP));
+        sendText (number, recipient);
     }//onListitemClick
     
 	@Override
@@ -182,4 +203,28 @@ public class EasyGoTexter extends ListActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         fillData ();
     }//onActivityResult
+	
+    //helper to simply pop up alert dialogs
+    public void alert (String title, String message) {
+        alert.setTitle(title);
+        alert.setMessage (message);
+        alert.setButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				return;
+			}
+		});
+        alert.show ();
+    }//alert helper function
+	
+	//called if you click the quick text button
+	public void quickText(View view) {
+		String text = quickTextBox.getText().toString();
+		if (text.length () == 0) return;
+	    sendText (default_recipient, text);
+	    
+	    //now start an intent to add an entry
+	    Intent i = new Intent(this, Editor.class);
+	    i.putExtra (DbAdapter.KEY_NUMBER, text);
+	    startActivityForResult(i, ACTIVITY_CREATE);
+	 }
 }

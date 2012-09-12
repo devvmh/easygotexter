@@ -38,8 +38,9 @@ public class DbAdapter {
 
     public static final String KEY_NUMBER = "_number";
     public static final String KEY_DESC = "_description";
+    public static final String KEY_RECIP = "_recipient";
     public static final String KEY_ROWID = "_id";
-
+    
     private static final String TAG = "DbAdapter";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -49,11 +50,12 @@ public class DbAdapter {
      */
     private static final String DATABASE_CREATE =
         "create table notes (_id integer primary key autoincrement, "
-        + "_number text not null, _description text not null);";
+        + "_number text not null, _description text not null, "
+        + "_recipient text not null);";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "notes";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private final Context mCtx;
 
@@ -117,11 +119,12 @@ public class DbAdapter {
      * @param body the body of the note
      * @return rowId or -1 if failed
      */
-    public long createNote(String number, String description) {
+    public long createNote(String number, String description, String recipient) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_NUMBER, number);
         initialValues.put(KEY_DESC, description);
-
+        initialValues.put(KEY_RECIP, recipient);
+        
         //only create if it's not blank
         if (description.equals ("")) {
         	return -1;
@@ -149,7 +152,7 @@ public class DbAdapter {
     public Cursor fetchAllNotes() {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NUMBER,
-                KEY_DESC}, null, null, null, null, null);
+                KEY_DESC, KEY_RECIP}, null, null, null, null, null);
     }
 
     /**
@@ -164,7 +167,7 @@ public class DbAdapter {
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-                    KEY_NUMBER, KEY_DESC}, KEY_ROWID + "=" + rowId, null,
+                    KEY_NUMBER, KEY_DESC, KEY_RECIP}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -183,10 +186,12 @@ public class DbAdapter {
      * @param body value to set note body to
      * @return true if the note was successfully updated, false otherwise
      */
-    public boolean updateNote(long rowId, String number, String description) {
+    public boolean updateNote(long rowId, String number, String description, 
+    		String recipient) {
         ContentValues args = new ContentValues();
         args.put(KEY_NUMBER, number);
         args.put(KEY_DESC, description);
+        args.put(KEY_RECIP, recipient);
 
         //delete the note if it's blank, else update it as normal
         if (description.equals ("")) {
