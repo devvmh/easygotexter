@@ -11,4 +11,14 @@
     	android:key="show_num_in_desc"
  		android:title="Show EasyGo Number"
 	 	android:summary="e.g. Visible Description - 1234" />
+	<CheckBoxPreference
+		android:key="importexport_warning"
+		android:title="Import/Export Warning"
+		android:summary="Uncheck to hide warning dialog each time" 
+		android:defaultValue="true"/>
+	<CheckBoxPreference
+		android:key="delete_old_on_import"
+		android:title="Import Overwrite"
+		android:summary="If checked, old notes will be deleted on import"
+		android:defaultValue="false" />
 </PreferenceScreen>

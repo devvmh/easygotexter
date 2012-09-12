@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout 
+       	android:orientation="vertical" 
+       	android:layout_width="fill_parent" 
+       	android:layout_height="wrap_content">
+       	
+       	:#export section
+		<TextView 
+       		android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:layout_height="wrap_content" 
+        	android:text="@string/export_section_title" 
+        	android:layout_width="fill_parent"
+        	android:gravity="center_horizontal"/>
+        <Button 
+           	android:layout_width="fill_parent" 
+           	android:onClick="export" 
+           	android:layout_height="wrap_content" 
+           	android:text="@string/export_button" />
+        <EditText 
+           	android:layout_weight="1" 
+           	android:layout_width="fill_parent" 
+           	android:text="@string/export_path" 
+           	android:id="@+id/export_text" 
+           	android:layout_height="wrap_content">
+        </EditText>
+        
+        :#separator
+        <View
+			android:layout_width="fill_parent"
+			android:layout_height="60dp"/>
+        
+        :#import section
+    	<TextView 
+    		android:textAppearance="?android:attr/textAppearanceLarge"
+    		android:layout_height="wrap_content" 
+    		android:text="@string/import_section_title" 
+    		android:layout_width="fill_parent" 
+    		android:gravity="center_horizontal"/>
+		<Button 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/import_button"
+			android:onClick="importNotes" />
+		<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/import_path"
+			android:id="@+id/import_text" />
+	</LinearLayout>
+</LinearLayout>

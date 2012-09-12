@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EasyGoTexter</string>
+    
     <string name="no_notes">No Entries Yet</string>
     <string name="menu_insert">Add Entry</string>
     <string name="menu_delete">Delete Entry</string>
     <string name="edit_note">Edit Entry</string>
-    <string name="menu_settings">Settings</string>
+    <string name="send_text">Send Text</string>
+    <string name="settings">Settings</string>
+       
     <string name="title">EasyGo Stop Number</string>
     <string name="body">Visible Description</string>
     <string name="recip">Text Recipient</string>
     <string name="confirm">Confirm</string>
-    <string name="send_text">Send Text</string>
-    <string name="settings">Settings</string>
+    
     <string name="default_recipient">57555</string>
-    <string name="blank_warning">Set description to blank to delete note</string>
     <string name="separator">" - "</string>
     <string name="quicktext">Send a quick text</string>
-    <string name="prefs_save">Save</string>
+    
+    <string name="importexport">Import/Export</string>
+    <string name="export_section_title">Export:</string>
+    <string name="export_button">Export numbers to:</string>
+    <string name="export_path">/sdcard/easygo.txt</string>
+    <string name="export_compat_version">1</string>
+    <string name="import_section_title">Import:</string>
+    <string name="import_button">Import numbers from:</string>
+    <string name="import_path">/sdcard/easygo.txt</string>
+    
+    <string name="importexport_title">Importing and Exporting</string>
+    <string name="importexport_help">Warning: this screen contains functionality that may corrupt or delete your database if used improperly. If you don\'t want to lose your stored numbers, simply hit the BACK button on your device after closing this dialog. Otherwise, read on to find out how to use this screen.
+	\n
+	Exporting:
+    To export data, type a filename into the text box next to the export button. It must be in the /sdcard directory, and this application will not overwrite pre-existing files. While a file extension isn\'t necessary, using \".txt\" is recommended. Once you have typed a valid filename into the box, click on the Export button and your numbers will be extracted from this application and saved in a human- and computer-readable format.
+    \n\n
+    Importing:
+    To import data, you must ensure that the file you specify is on your sdcard. It must also have a \"version\" number equal to this application\'s exporting version number. This application is currently exporting files of version %1$s. If no changes are made to the way numbers are exported, your files should be compatible with further versions of this application.</string>
 </resources>

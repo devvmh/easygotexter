@@ -127,11 +127,17 @@ public class EasyGoTexter extends ListActivity {
     	MenuInflater inflater = getMenuInflater ();
     	inflater.inflate(R.menu.options_menu, menu);
     	
+    	//prefs intent
     	Intent prefsIntent = new Intent(this.getApplicationContext(),
     	        PrefsActivity.class);
-    	 
     	MenuItem preferences = menu.findItem(R.id.settings_option_item);
     	preferences.setIntent(prefsIntent);
+    	
+    	//import/export intent
+    	Intent importExportIntent = new Intent (this.getApplicationContext(),
+    			ImportExportActivity.class);
+    	MenuItem importexport = menu.findItem(R.id.importexport_option_item);
+    	importexport.setIntent(importExportIntent);
     	
     	return true;
     }
@@ -144,7 +150,9 @@ public class EasyGoTexter extends ListActivity {
     	        startActivityForResult(i, ACTIVITY_CREATE);
     			return true;
     		case R.id.settings_option_item:
-    			//doing it for result means it'll fill data when it returns
+    			this.startActivity(item.getIntent());
+    			return true;
+    		case R.id.importexport_option_item:
     			this.startActivity(item.getIntent());
     			return true;
     	}//switch

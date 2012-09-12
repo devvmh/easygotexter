@@ -4,9 +4,13 @@
     <item 
      android:id="@+id/add_note"
      android:icon="@android:drawable/ic_menu_add"
-     android:title="@string/menu_insert"></item>
+     android:title="@string/menu_insert" />
     <item
    	 android:id="@+id/settings_option_item"
    	 android:icon="@android:drawable/ic_menu_preferences"
-   	 android:title="@string/settings"></item>
+   	 android:title="@string/settings" />
+   	<item
+   	 android:id="@+id/importexport_option_item"
+   	 android:icon="@android:drawable/ic_menu_share"
+   	 android:title="@string/importexport" />
 </menu>

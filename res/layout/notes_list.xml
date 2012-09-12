@@ -3,11 +3,11 @@
     			android:layout_height="wrap_content" 
     			android:orientation="vertical" 
     			android:layout_width="fill_parent">
-    <LinearLayout 	android:layout_height="wrap_content"
+      <LinearLayout	android:layout_height="wrap_content"
     				android:orientation="horizontal"
     				android:layout_width="fill_parent">
     	<Button
-    		android:id="@+id/quicktext"
+    		android:id="@+id/quicktext_button"
 			android:layout_height="50dip" 
         	android:layout_width="200dip"
         	android:text="@string/quicktext"
@@ -20,11 +20,13 @@
     <ListView 
     	android:id="@+id/android:list"
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge">
     </ListView>
   	<TextView 
   		android:id="@+id/android:empty"
   		android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-       	android:text="@string/no_notes"/>
+       	android:text="@string/no_notes"
+       	android:textAppearance="?android:attr/textAppearanceLarge"/>
 </LinearLayout>
