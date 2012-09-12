@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.zip.DataFormatException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,6 +42,7 @@ public class ImportExportActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.importexport_layout);
+        setTitle(R.string.importexport);
         
     	//sets up alerts
     	alert = new AlertDialog.Builder(this).create();
@@ -185,14 +187,14 @@ public class ImportExportActivity extends Activity {
     public String deleteOrNot () {
     	return (deleteOld)  ? "Your old notes will be deleted." 
     						: "Your old notes will not be deleted.";
-    }
+    }//deleteOrNot
     
     public void actuallyImportNotes () {
     	String path = getPath ("import");
     	File file = new File (path);
     	if (! file.exists()) {
     		alert ("Error", "File not found on sdcard.");
-    	}
+    	}//if
     	
     	ImportTask importer = new ImportTask ();
     	importer.execute (path);
@@ -213,14 +215,16 @@ public class ImportExportActivity extends Activity {
 			//verify first line is formatted right and has correct version number
 			try {
 				verifyVersion (reader.readLine ());
-			} catch(Exception e) {
+			} catch(DataFormatException e) {
 				publishProgress ("Error", "File has incorrect version number or malformed first line");
 				return null;
+			} catch (IOException e) {
+				publishProgress ("Error", "Couldn't read that file!");
 			}//try-catch
 			
 			if (deleteOld) {
 				mDbHelper.deleteAllNotes ();
-			}
+			}//if
 			
 			try {
 				String line;
@@ -244,9 +248,10 @@ public class ImportExportActivity extends Activity {
 			return null;
 		}//doInBackground
 		
-		public void verifyVersion (String line) throws Exception {
+		public void verifyVersion (String line) throws DataFormatException {
 			//if anything goes wrong in parsing, throw e
-			Exception e = new Exception ();
+			DataFormatException e = new DataFormatException ();
+			
 			
 			//tokenize () returns null if too few/too many tokens
 			String [] tokens = tokenize (line);

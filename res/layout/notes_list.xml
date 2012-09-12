@@ -3,7 +3,7 @@
     			android:layout_height="wrap_content" 
     			android:orientation="vertical" 
     			android:layout_width="fill_parent">
-      <LinearLayout	android:layout_height="wrap_content"
+    <LinearLayout	android:layout_height="wrap_content"
     				android:orientation="horizontal"
     				android:layout_width="fill_parent">
     	<Button

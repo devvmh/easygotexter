@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 		package="com.callysto.devin.easygotexter"
-        android:versionCode="5" android:versionName="1.4">
+        android:versionCode="7" android:versionName="1.4.2">
         
     <application android:icon="@drawable/icon">
     
-        <activity android:name=".EasyGoTexter" android:label="@string/app_name">
+        <activity android:name=".MainActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
-        <activity android:name="com.callysto.devin.easygotexter.PrefsActivity" />
-        <activity android:name="com.callysto.devin.easygotexter.Editor" />
-        <activity android:name="com.callysto.devin.easygotexter.ImportExportActivity" />
+        <activity android:name=".PrefsActivity" />
+        <activity android:name=".EditorActivity" />
+        <activity android:name=".ImportExportActivity" />
     </application>
     
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7"></uses-sdk>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
 </manifest>
