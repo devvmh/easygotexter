@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EasyGoTexter</string>
+    <string name="no_notes">No Notes Yet</string>
+    <string name="menu_insert">Add Note</string>
+    <string name="menu_delete">Delete Note</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title">EasyGo Stop Number</string>
+    <string name="body">Visible Description</string>
+    <string name="confirm">Confirm</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="send_text">Send Text</string>
+    <string name="settings">Settings</string>
+    <string name="easygo_num">57555</string>
+    <string name="blank_warning">Set description to blank to delete note</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android" android:title="Settings">
+    <EditTextPreference 
+    	android:summary="Click to edit"
+    	android:defaultValue="@string/easygo_num" 
+    	android:title="EasyGo's Number"
+        android:dialogTitle="EasyGo's Number"
+        android:key="text_to_pref"></EditTextPreference>
+</PreferenceScreen>
