@@ -1,5 +1,7 @@
 package com.callysto.devin.easygotexter;
 
+import com.callysto.devin.easygotexter.util.DbAdapter;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;

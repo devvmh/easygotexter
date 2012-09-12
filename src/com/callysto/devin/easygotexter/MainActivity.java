@@ -16,8 +16,6 @@
 
 package com.callysto.devin.easygotexter;
 
-import com.callysto.devin.easygotexter.util.FormattableCursorAdapter;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -28,16 +26,24 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.CursorAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.custom.CursorAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import com.callysto.devin.easygotexter.util.DbAdapter;
+import com.callysto.devin.easygotexter.util.FormattableCursorAdapter;
+import com.callysto.devin.easygotexter.util.RowidImageView;
+import com.ericharlow.DragNDrop.DragListener;
+import com.ericharlow.DragNDrop.DragNDropListView;
+import com.ericharlow.DragNDrop.DropListener;
 
 public class MainActivity extends ListActivity {
     private static final int ACTIVITY_CREATE = 0;
@@ -65,6 +71,8 @@ public class MainActivity extends ListActivity {
         
     	//sets up alerts
     	alert = new AlertDialog.Builder(this).create();
+    	
+    	setUpDragNDrop();
         
         //update preferences
         getPrefs();
@@ -105,20 +113,21 @@ public class MainActivity extends ListActivity {
         CursorAdapter notes;
 
         //showing just visible description, or number too?
+        String [] from;
+        String format;
         if (showNumberToo) {
         	// Create an array to specify the fields we want to display in the list
-        	String[] from = new String[]{DbAdapter.KEY_DESC, DbAdapter.KEY_NUMBER};
+        	from = new String[]{DbAdapter.KEY_DESC, DbAdapter.KEY_NUMBER};
         	
         	//put DESC in the first {} and NUMBER in the second {}
-        	notes = new FormattableCursorAdapter(this, notesCursor, from, "{} - {}",
-        			R.id.text1, R.layout.notes_row);
+        	format = "{} - {}";
+        	
         } else {
         	//analagous to the above, but only showing the visible description
-        	String [] from = new String [] {DbAdapter.KEY_DESC};
-        	int [] to = new int[]{R.id.text1};
-        	notes = new SimpleCursorAdapter (this, R.layout.notes_row,
-        			notesCursor, from, to);
+        	from = new String [] {DbAdapter.KEY_DESC};
+        	format = "{}";
     	}//if
+    	notes = new FormattableCursorAdapter (this, notesCursor, from, format, R.id.text1, R.layout.notes_row, mDbHelper);
         setListAdapter(notes);
     }
 
@@ -245,4 +254,45 @@ public class MainActivity extends ListActivity {
 	    i.putExtra (DbAdapter.KEY_NUMBER, text);
 	    startActivityForResult(i, ACTIVITY_CREATE);
 	 }
+	
+	public void setUpDragNDrop() {
+        ListView listView = getListView();
+        
+        if (listView instanceof DragNDropListView) {
+        	((DragNDropListView) listView).setDropListener(new DropListener() {
+    	        public void onDrop(View dragged, View replaced) {
+    	        	ListAdapter adapter = getListAdapter();
+    	        	if (adapter instanceof DropListener) {
+    	        		((DropListener)adapter).onDrop(dragged, replaced);
+    	        		System.out.println ("Invalidating: " + getListView().getClass().getName());
+    	        		fillData();
+    	        	}
+    	        }
+        	});
+        	((DragNDropListView) listView).setDragListener(new DragListener() {
+
+	        	int backgroundColor = 0xe0103010;
+	        	int defaultBackgroundColor;
+	        	
+	    			public void onDrag(int x, int y, ListView listView) {
+	    				// TODO Auto-generated method stub
+	    			}
+
+	    			public void onStartDrag(View itemView) {
+	    				itemView.setVisibility(View.INVISIBLE);
+	    				defaultBackgroundColor = itemView.getDrawingCacheBackgroundColor();
+	    				itemView.setBackgroundColor(backgroundColor);
+	    				ImageView iv = (ImageView)itemView.findViewById(R.id.image);
+	    				if (iv != null) iv.setVisibility(View.INVISIBLE);
+	    			}
+
+	    			public void onStopDrag(View itemView) {
+	    				itemView.setVisibility(View.VISIBLE);
+	    				itemView.setBackgroundColor(defaultBackgroundColor);
+	    				RowidImageView iv = (RowidImageView)itemView.findViewById(R.id.image);
+	    				if (iv != null) iv.setVisibility(View.VISIBLE);
+	    			}
+	        });
+        }//if it's actually a drag 'n' drop list view!
+	}//set up drag and drop
 }

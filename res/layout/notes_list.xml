@@ -15,14 +15,15 @@
         <EditText
         	android:id="@+id/quicktextbox"
         	android:layout_height="50dip"
-        	android:layout_width="fill_parent" />
+        	android:layout_width="fill_parent"
+        	android:inputType="number" />
 	</LinearLayout>
-    <ListView 
+    <com.ericharlow.DragNDrop.DragNDropListView 
     	android:id="@+id/android:list"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge">
-    </ListView>
+    </com.ericharlow.DragNDrop.DragNDropListView>
   	<TextView 
   		android:id="@+id/android:empty"
   		android:layout_height="wrap_content"

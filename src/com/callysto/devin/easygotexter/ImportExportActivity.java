@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.zip.DataFormatException;
 
+import com.callysto.devin.easygotexter.util.DbAdapter;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -92,6 +94,7 @@ public class ImportExportActivity extends Activity {
     	String retval = "EasyGoTexter numbers file version " + compatVersion + "\n";
     	
     	//get values and store them in a string
+    	//fetchAllNotes *should* order them by _order
     	Cursor c = mDbHelper.fetchAllNotes ();
         for (c.moveToFirst (); c.isAfterLast() == false; c.moveToNext ()) {
         	retval += c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_NUMBER)) + " ";
